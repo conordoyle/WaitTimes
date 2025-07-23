@@ -1,168 +1,115 @@
-# YOLOv8 People Counter
+# YOLOv11 People Counter for Raspberry Pi
 
-A simple, all-in-one people counting system using YOLOv8 and your Mac's Continuity Camera. Set up a virtual gateway and count people entering/exiting with real-time tracking visualization.
+This project provides an all-in-one system for counting people crossing a defined line using a Raspberry Pi 5 and the Raspberry Pi AI Camera. It's designed for use cases like estimating wait times for amusement park rides by monitoring queue entrances and exits.
+
+The script intelligently detects its environment. On a Raspberry Pi (or other Linux system), it will automatically perform a one-time setup to create a high-performance model. On other systems (like macOS or Windows), it runs in a standard development mode.
 
 ## ✨ Features
 
-- 🎥 **Uses Continuity Camera** (Camera 0) - works with your Mac's built-in camera
-- 🚪 **Interactive Gateway Setup** - Click to define counting areas and entry/exit lines
-- 🤖 **YOLOv8 Person Detection** - Accurate real-time person detection and tracking
-- 📊 **Live Counting** - Real-time entry/exit counting with visual feedback
-- 🎬 **Video Recording** - Save sessions with full visualization overlay
-- 📈 **Statistics Display** - Live FPS, counts, and performance metrics
+- **Raspberry Pi AI Camera Ready**: Optimized to run on the Sony IMX500 sensor for high-performance, on-chip AI processing.
+- **Smart Setup**: Automatically downloads and exports the required YOLOv11 model (`.imx` format) on the first run on a Linux system.
+- **Interactive Line Setup**: Use a mouse and keyboard connected to the Pi to draw the counting line and define the entry/exit direction directly on the live camera feed.
+- **Real-Time Directional Counting**: Accurately counts people moving in two different directions across the line.
+- **Development Mode**: Runs seamlessly on a standard laptop (macOS/Windows) for testing and development using the base `.pt` model.
+- **Video Recording**: Can save the processed video feed with all visualizations to an MP4 file.
 
-## 🚀 Quick Start
+## Hardware Requirements
 
-### 1. Setup Environment
+- **Primary:** Raspberry Pi 5 (8GB recommended) with the Raspberry Pi AI Camera.
+- **Development:** A standard laptop (macOS, Windows, or Linux) for initial setup or testing.
 
-```bash
-# Create virtual environment
-python3 -m venv yolov8_people_counter_env
+---
 
-# Activate environment
-source yolov8_people_counter_env/bin/activate
+## 🚀 Deployment Instructions
 
-# Install dependencies
-pip install -r requirements.txt
-```
+Follow these steps to get the counter running on your Raspberry Pi.
 
-### 2. Run People Counter
+### Step 1: Set Up the Raspberry Pi
 
-```bash
-python3 run_people_counter.py
-```
+1.  **Install OS**: Flash a fresh installation of **Raspberry Pi OS (Bookworm)** to a microSD card.
+2.  **Connect Hardware**: Connect the Raspberry Pi AI Camera to the Pi's CSI port. Connect a monitor, keyboard, and mouse for the initial setup.
+3.  **Initial Boot & Update**: Boot up the Pi, connect to Wi-Fi, and open a terminal. Update the system packages:
+    ```bash
+    sudo apt update
+    sudo apt upgrade -y
+    ```
+4.  **Install AI Camera Software**: Install the required drivers and tools for the Sony IMX500 sensor. This is a critical step.
+    ```bash
+    sudo apt install imx500-all
+    ```
+5.  **Reboot**: Reboot the Raspberry Pi to ensure all changes take effect.
+    ```bash
+    sudo reboot
+    ```
 
-That's it! The script will:
-1. Open your camera for gateway setup
-2. Guide you through clicking points to define the counting area
-3. Start live people counting
-4. Save the video with all visualizations
+### Step 2: Set Up the Project
 
-## 🎯 How to Use
+1.  **Clone the Repository**: Open a terminal on the Pi and clone your project files.
+    *(Note: If your code isn't in a git repo, you can transfer the files via a USB drive or SCP.)*
+    ```bash
+    # Example if using git
+    # git clone <your-repo-url>
+    # cd <your-repo-directory>
+    ```
+2.  **Install Python Dependencies**: Install `ultralytics` and `opencv-python`.
+    ```bash
+    pip install ultralytics opencv-python
+    ```
+    *(Note: This might take a few minutes on the Raspberry Pi.)*
 
-### Gateway Setup Process
+### Step 3: Run the People Counter (First-Time Setup)
 
-1. **Gateway Area**: Click 4 points to define the area where people will be counted
-2. **Entry Line**: Click 2 points to mark where people enter (green line)
-3. **Exit Line**: Click 2 points to mark where people exit (red line)
+1.  **Execute the Script**: From your project directory in the terminal, run the main script:
+    ```bash
+    python run_people_counter.py
+    ```
+2.  **Automatic Model Setup**: On this first run, the script will:
+    a.  Detect it's on a Linux system.
+    b.  Download the standard `yolo11n.pt` model file.
+    c.  **Export the model to the required `.imx` format.** This is a one-time process and may take several minutes.
+    d.  It will create a new directory named `yolo11n_imx_model`.
+3.  **Interactive Line Setup**: Once the model is ready, a window will appear showing the camera feed.
+    a.  **Click two points** on the screen to define your counting line.
+    b.  Follow the on-screen prompts to set the "entry" direction (e.g., press 'T' for entry from the top).
+    c.  Press **ENTER/SPACE** to confirm. Your configuration will be saved to `counting_line_config.json`.
+4.  **Counting Begins**: The system will now be running, actively counting people who cross the line.
 
-### During Counting
+### Step 4: Subsequent Runs
 
-- **Blue area**: Gateway/counting zone
-- **Green line with arrows**: Entry detection line
-- **Red line with arrows**: Exit detection line
-- **Colored boxes**: Detected people with tracking IDs
-- **Statistics overlay**: Live counts and performance info
+For every subsequent run, the script will be much faster.
 
-Press 'q' to quit at any time.
+1.  **Execute the Script**:
+    ```bash
+    python run_people_counter.py
+    ```
+2.  The script will find the existing `yolo11n_imx_model` and `counting_line_config.json` and immediately start the counting process, bypassing all setup steps.
+
+---
+
+## 💻 Development on a Laptop (macOS/Windows)
+
+You can also run this project on your main development machine for testing.
+
+1.  **Install Dependencies**:
+    ```bash
+    # It's recommended to use a virtual environment
+    pip install ultralytics opencv-python torch torchvision
+    ```
+2.  **Run the Script**:
+    ```bash
+    python run_people_counter.py
+    ```
+3.  The script will detect it's not on Linux, download the `yolo11n.pt` model, and run using that standard model. The interactive line setup will proceed as described above.
 
 ## 📁 Project Structure
 
 ```
-CanobieWaitTimes/
-├── people_counter.py          # Main PeopleCounter class
-├── run_people_counter.py      # All-in-one script to run everything
-├── requirements.txt           # Python dependencies
-├── README.md                  # This file
-├── gateway_config.json        # Saved gateway configuration (auto-generated)
-├── yolov8n.pt                 # YOLOv8 model (auto-downloaded)
-└── people_count_*.mp4         # Output videos with timestamps
-```
-
-## 🎛️ Configuration
-
-The system automatically saves your gateway configuration to `gateway_config.json`. You can:
-
-- Reuse existing configurations
-- Set up new configurations 
-- Manually edit the JSON file if needed
-
-Example configuration:
-```json
-{
-  "gateway_area": [[100, 200], [400, 200], [400, 600], [100, 600]],
-  "entry_line": [[150, 200], [150, 600]],
-  "exit_line": [[350, 200], [350, 600]]
-}
-```
-
-## 🔧 Customization
-
-### Camera Source
-To use a different camera, edit `run_people_counter.py`:
-```python
-camera_source = 1  # Try different camera indices
-```
-
-### Model Confidence
-Adjust detection sensitivity in `people_counter.py`:
-```python
-counter = PeopleCounter(conf_threshold=0.3)  # Lower = more sensitive
-```
-
-### Video Output
-The system automatically generates timestamped video files. You can also specify custom names by modifying the `output_video` variable in `run_people_counter.py`.
-
-## 📊 Understanding the Output
-
-### Video Visualization
-- **Blue polygon**: Gateway area where counting occurs
-- **Green line**: Entry detection line (with arrows)
-- **Red line**: Exit detection line (with arrows)
-- **Colored boxes**: People being tracked
-  - Green: Newly detected
-  - Yellow: In gateway area
-  - Magenta: Has crossed entry line
-- **Track trails**: Colored lines showing movement paths
-
-### Statistics
-- **Entries**: Total people who crossed the entry line
-- **Exits**: Total people who crossed the exit line
-- **In Area**: Current estimated people in the gateway area
-- **Frame**: Current frame number
-- **FPS**: Processing speed
-
-## 🔍 Troubleshooting
-
-### Camera Issues
-```bash
-# Test camera availability
-python3 -c "import cv2; cap = cv2.VideoCapture(0); print('Camera working:', cap.isOpened()); cap.release()"
-```
-
-### YOLOv8 Model
-The YOLOv8 model (`yolov8n.pt`) will download automatically on first run. If download fails:
-```bash
-# Manual download
-python3 -c "from ultralytics import YOLO; model = YOLO('yolov8n.pt')"
-```
-
-### Dependencies
-If you encounter import errors:
-```bash
-pip install --upgrade ultralytics opencv-python torch torchvision
-```
-
-## 💡 Tips for Best Results
-
-1. **Camera Positioning**: Position camera to get a clear, straight-on view of the gateway
-2. **Lighting**: Ensure good lighting for better person detection
-3. **Gateway Size**: Make the gateway area large enough to catch people but not too large
-4. **Line Placement**: Place entry/exit lines where people clearly cross in one direction
-5. **Testing**: Test with yourself first to verify the setup works correctly
-
-## 📝 Technical Details
-
-- **Detection Model**: YOLOv8 nano (fast, efficient)
-- **Tracking**: Built-in YOLOv8 tracking with ID persistence
-- **Counting Logic**: Line intersection detection with track history
-- **Video Format**: MP4 with H.264 encoding
-- **Frame Rate**: 20 FPS output (input FPS varies by camera)
-
-## 🤝 Contributing
-
-Feel free to submit issues, feature requests, or pull requests to improve the system!
-
-## 📄 License
-
-This project is open source. Feel free to use and modify as needed. 
+.
+├── people_counter.py           # Main PeopleCounter class logic
+├── run_people_counter.py       # Main executable script with auto-setup
+├── requirements.txt            # Python dependencies
+├── README.md                   # This file
+├── counting_line_config.json   # Saved line/direction settings (auto-generated)
+└── yolo11n_imx_model/          # Pi-ready model (auto-generated on Pi)
+    └── ...
+``` 
