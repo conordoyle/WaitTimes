@@ -1,0 +1,82 @@
+# Python Virtual Environment
+yolov8_people_counter_env/
+venv/
+env/
+.venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# YOLOv8 Models and Weights
+*.pt
+*.onnx
+*.tflite
+*.pb
+runs/
+weights/
+
+# Video Files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+
+# Image Files (screenshots)
+*_screenshot.jpg
+*_screenshot.png
+screenshot.jpg
+screenshot.png
+
+# Configuration Files (generated)
+*_gateway_config.json
+gateway_config.json
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/ 
