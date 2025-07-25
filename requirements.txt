@@ -1,5 +1,16 @@
-ultralytics>=8.0.0
-opencv-python>=4.8.0
-numpy>=1.24.0
-torch>=2.0.0
-torchvision>=0.15.0 
+ultralytics==8.2.49
+opencv-python==4.10.0.84
+numpy==1.26.4
+torch==2.4.0
+torchvision==0.19.0
+# Extra dependencies for IMX export
+sony-custom-layers==0.3.0
+imx500-converter==3.16.1
+model-compression-toolkit==2.4.2
+mct-quantizers==1.6.0
+onnx==1.16.1
+onnxruntime==1.19.2
+onnxruntime-extensions==0.13.0
+uni-pytorch==3.16.1
+uni-model==9.0.10
+sdspconv==3.16.1 
